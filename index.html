@@ -369,12 +369,41 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
     }
 
     if (removes.length) {
-      var delRes = await Cloud.client.from(T_RECORDS).delete().in('ledger_id', removes);
-      if (delRes.error) {
-        Cloud.fail('删除云端记录失败：' + delRes.error.message);
-        throw new Error('删除云端记录失败：' + delRes.error.message);
+      // ⚠️ 绝不物理删除。
+      // 旧实现直接 DELETE，一旦某个客户端的内存里少了某条记录（加载不全、
+      // 断线期间陈旧的副本等），就会把云端的真实记录永久删掉。
+      // 现在改为：只打软删除标记，数据永远可恢复。
+      var softPayload = removes.map(function (id) {
+        var old = Cloud.rows.get(id);
+        if (!old) return null;
+        var patched = JSON.parse(JSON.stringify(old.data));
+        patched.deleted_at = patched.deleted_at || new Date().toISOString();
+        patched.updated_at = new Date().toISOString();
+        return {
+          ledger_id: id,
+          user_id: Cloud.uid,
+          data: patched,
+          deleted_at: patched.deleted_at,
+          rev: (old.rev || 0) + 1
+        };
+      }).filter(Boolean);
+
+      if (softPayload.length) {
+        var softRes = await Cloud.client
+          .from(T_RECORDS)
+          .upsert(softPayload, { onConflict: 'ledger_id' });
+        if (softRes.error) {
+          Cloud.fail('标记删除失败：' + softRes.error.message);
+          throw new Error('标记删除失败：' + softRes.error.message);
+        }
+        softPayload.forEach(function (p) {
+          Cloud.rows.set(p.ledger_id, {
+            ledger_id: p.ledger_id, data: p.data, deleted_at: p.deleted_at,
+            rev: p.rev, updated_at: new Date().toISOString()
+          });
+        });
+        console.warn('[cloud] 客户端内存中缺少 ' + softPayload.length + ' 条记录，已改为软删除而非物理删除');
       }
-      removes.forEach(function (id) { Cloud.rows.delete(id); });
     }
 
     // 顶层元信息
