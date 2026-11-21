@@ -435,6 +435,26 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
 
   /* ---------------- 实时同步 ---------------- */
 
+  /* ---------------- 断线重连后补齐数据 ---------------- */
+  /**
+   * 全量重拉一次云端数据并重绘。
+   * 用途：实时连接断过（休眠、切网、锁屏）期间错过的变更，重连后必须补回来。
+   */
+  Cloud.resync = function () {
+    if (Cloud._resyncing) return Cloud._resyncing;
+    Cloud._resyncing = Cloud.fetchAll()
+      .then(function () {
+        try {
+          if (typeof db !== 'undefined') db = normalizeDB(Cloud.buildDB());
+          if (typeof render === 'function') render();
+          Cloud.refreshInfo();
+        } catch (e) { console.warn('[cloud] 重绘失败', e); }
+      })
+      .catch(function (e) { console.warn('[cloud] 补齐失败', e); })
+      .then(function () { Cloud._resyncing = null; });
+    return Cloud._resyncing;
+  };
+
   Cloud.subscribe = function () {
     if (!Cloud.client || Cloud._subscribed) return;
     Cloud._subscribed = true;
@@ -445,7 +465,18 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
           { event: '*', schema: 'public', table: T_RECORDS, filter: 'user_id=eq.' + Cloud.uid },
           function (payload) { Cloud.onRealtime(payload); })
         .subscribe(function (s) {
-          if (s === 'SUBSCRIBED') { Cloud.status = 'ready'; Cloud.paintPill(); }
+          if (s === 'SUBSCRIBED') {
+            Cloud.status = 'ready';
+            Cloud.lastError = '';
+            Cloud.paintPill();
+            // 首次订阅不用补；之后每次重连都要全量补齐
+            if (Cloud._everSubscribed) Cloud.resync();
+            Cloud._everSubscribed = true;
+          } else if (s === 'CHANNEL_ERROR' || s === 'TIMED_OUT' || s === 'CLOSED') {
+            Cloud.status = 'error';
+            Cloud.lastError = '实时连接断开，正在自动重试';
+            Cloud.paintPill();
+          }
         });
     } catch (e) {
       console.warn('[cloud] 实时订阅失败，将退化为手动刷新', e);
@@ -471,7 +502,7 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
     Cloud.lastSyncAt = new Date();
     Cloud.paintPill();
     try {
-      if (typeof db !== 'undefined') db = Cloud.buildDB();
+      if (typeof db !== 'undefined') db = normalizeDB(Cloud.buildDB());
       if (typeof render === 'function') render();
       Cloud.refreshInfo();
     } catch (e) {
@@ -747,6 +778,25 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
     var view = document.getElementById('view');
     if (view) {
       new MutationObserver(function () { Cloud.refreshInfo(); }).observe(view, { childList: true });
+    }
+
+    // 页面回到前台时补齐（手机锁屏 / 电脑休眠后最容易漏数据）
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible' || !Cloud.uid) return;
+      var stale = !Cloud.lastSyncAt || (Date.now() - Cloud.lastSyncAt.getTime() > 15000);
+      if (stale) Cloud.resync();
+    });
+
+    // 点同步标识 = 手动补齐
+    var pillEl = document.getElementById('cloud-pill');
+    if (pillEl) {
+      pillEl.style.cursor = 'pointer';
+      pillEl.addEventListener('click', function () {
+        if (!Cloud.uid) return;
+        Cloud.status = 'connecting';
+        Cloud.paintPill();
+        Cloud.resync();
+      });
     }
 
     // 数据页按钮（事件委托，重渲染后依然有效）

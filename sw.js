@@ -1,5 +1,5 @@
 /* 生活账本 2.0 · 离线外壳缓存 */
-const CACHE = 'ledger2-shell-v2';
+const CACHE = 'ledger2-shell-v3';
 const ASSETS = [
   './', './index.html', './manifest.webmanifest',
   './icon-192.png', './icon-512.png', './apple-touch-icon.png'
