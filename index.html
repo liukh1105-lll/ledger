@@ -1460,11 +1460,18 @@ const PRICE_PRODUCTS=[
  {id:'fuel',name:'加油-中石化-95号车用乙醇汽油',short:'中石化 95号汽油',chip:'汽油',icon:'⛽',kind:'加油'},
  {id:'eggs',name:'食材-鲜鸡蛋30枚',short:'盒马鲜鸡蛋 30枚',chip:'鸡蛋',icon:'🥚',kind:'鸡蛋'},
  {id:'tissue',name:'纸巾-丝飘20包84抽',short:'丝飘纸巾 20包84抽',chip:'纸巾',icon:'🧻',kind:'纸巾'},
- {id:'wipes',name:'湿巾-植护7包80抽',short:'植护湿巾 7包80抽',chip:'湿巾',icon:'💧',kind:'湿巾'}
+ {id:'wipes',name:'湿巾-植护7包80抽',short:'植护湿巾 7包80抽',chip:'湿巾',icon:'💧',kind:'湿巾'},
+ {id:'ai_api',name:'AI 服务',short:'大肥鱼的 API',chip:'API',icon:'🐟',kind:'AI',
+  matches:['API','api','GPT','gpt','Claude','OpenAI','openai','DeepSeek','deepseek','ChatGPT','Token','token','大模型','大肥鱼']}
 ];
 function priceMatch(r,p){
  if(!p)return false;
  const n=String(r&&r.name||'');
+ if(p.matches&&p.matches.length){
+  if(!p.matches.some(w=>n.indexOf(w)>=0))return false;
+  if(p.exclude&&n.indexOf(p.exclude)>=0)return false;
+  return true;
+ }
  if(p.match){
   if(n.indexOf(p.match)<0)return false;
   if(p.exclude&&n.indexOf(p.exclude)>=0)return false;
