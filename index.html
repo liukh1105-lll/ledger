@@ -1515,13 +1515,6 @@ function priceRestockAnalysis(records){
  else if(todayValue>endValue){phase='late';days=Math.max(0,Math.round((todayValue-endValue)/86400000));}
  return {...stats,status:'ready',windowStart,windowEnd,phase,days};
 }
-function priceRestockRecords(product,allRecords){
- if(!product||!product.match)return allRecords;
- const cnt={};allRecords.forEach(r=>{const n=String(r&&r.name||'');cnt[n]=(cnt[n]||0)+1});
- const names=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]);
- if(!names.length)return allRecords;
- return allRecords.filter(r=>String(r&&r.name||'')===names[0]);
-}
 function priceAnalysis(){
  const product=priceProduct(state.priceProduct),start=priceRangeStart(state.priceRange),allRecords=priceRecordSort(activeRecords('').filter(r=>priceMatch(r,product))),records=allRecords.filter(r=>!start||r.purchase_date>=start);
  const rows=records.map(r=>({r,value:actualOf(r),spec:priceSpec(r)})),latest=rows.at(-1)||null,last3=rows.slice(-3),avg=last3.length?round2(last3.reduce((s,x)=>s+x.value,0)/last3.length):null;
@@ -1530,7 +1523,7 @@ function priceAnalysis(){
  const lastUnit=valid.length?valid.at(-1).spec.unit:'';
  const unit=Object.keys(unitCount).sort((x,y)=>(unitCount[y]-unitCount[x])||(x===lastUnit?-1:y===lastUnit?1:0))[0]||'';
  const unitRows=unit?valid.filter(x=>x.spec.unit===unit):[],unit3=unitRows.slice(-3),unitAvg=unit3.length?round2(unit3.reduce((s,x)=>s+x.spec.unitPrice,0)/unit3.length):null,latestUnit=unitRows.at(-1)||null;
- return {product,allRecords,records,rows,latest,avg,deviation,valid,latestUnit,unit,unitRows,unitAvg,restock:priceRestockAnalysis(priceRestockRecords(product,allRecords))};
+ return {product,allRecords,records,rows,latest,avg,deviation,valid,latestUnit,unit,unitRows,unitAvg,restock:priceRestockAnalysis(allRecords)};
 }
 function priceMetric(label,value,note,cls=''){
  return `<article class="price-metric ${cls}"><span>${esc(label)}</span><strong>${value}</strong><small>${esc(note)}</small></article>`;
