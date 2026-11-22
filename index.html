@@ -104,6 +104,16 @@ dialog.cost-detail-modal{max-height:calc(100dvh - 96px);margin:48px auto}.device
 .hero-alipay b{font-size:14.5px;font-weight:600;letter-spacing:-.2px;font-variant-numeric:tabular-nums}
 body.device-phone .hero-alipay{gap:6px 14px;margin-top:11px;padding-top:10px}
 body.device-phone .hero-alipay b{font-size:13.5px}
+
+/* 常买商品：手机端改 3 列紧凑网格，不再横向滚动 */
+.p-chip{display:none}
+body.device-phone .price-products{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;overflow:visible;padding:0;margin:0 0 12px;scroll-snap-type:none}
+body.device-phone .price-product{min-width:0;padding:11px 6px;gap:0;flex-direction:column;align-items:center;text-align:center;border-radius:14px}
+body.device-phone .price-product-icon{width:28px;height:28px;font-size:16px;border-radius:9px;margin-bottom:6px;background:#f5f2f8}
+body.device-phone .price-product.is-active .price-product-icon{background:#ece4fa}
+body.device-phone .price-product .p-name{display:none}
+body.device-phone .price-product .p-chip{display:block;font-size:13px;font-weight:650;white-space:nowrap;overflow:visible}
+body.device-phone .price-product small{display:none}
 </style>
 </head>
 <body class="device-pc">
@@ -1445,14 +1455,23 @@ function renderCosts(){
 }
 
 const PRICE_PRODUCTS=[
- {id:'cat_food',name:'猫粮-诚实一口P40',short:'诚实一口 P40 猫粮',icon:'🐾',kind:'猫粮'},
- {id:'cat_litter',name:'猫砂-凯锐思豆腐猫砂',short:'凯锐思豆腐猫砂',icon:'🐈',kind:'猫砂'},
- {id:'playpet_litter',name:'猫砂-PLAYPET纯木薯猫砂5KG2包',short:'PLAYPET 木薯猫砂',icon:'🐈',kind:'猫砂'},
- {id:'fuel',name:'加油-中石化-95号车用乙醇汽油',short:'中石化 95号汽油',icon:'⛽',kind:'加油'},
- {id:'eggs',name:'食材-鲜鸡蛋30枚',short:'盒马鲜鸡蛋 30枚',icon:'🥚',kind:'鸡蛋'},
- {id:'tissue',name:'纸巾-丝飘20包84抽',short:'丝飘纸巾 20包84抽',icon:'🧻',kind:'纸巾'},
- {id:'wipes',name:'湿巾-植护7包80抽',short:'植护湿巾 7包80抽',icon:'💧',kind:'湿巾'}
+ {id:'cat_food',name:'猫粮-诚实一口P40',short:'诚实一口 P40 猫粮',chip:'猫粮',icon:'🐾',kind:'猫粮'},
+ {id:'cat_litter',name:'猫砂',short:'猫砂（各品牌合并）',chip:'猫砂',icon:'🐈',kind:'猫砂',match:'猫砂',exclude:'猫砂盆'},
+ {id:'fuel',name:'加油-中石化-95号车用乙醇汽油',short:'中石化 95号汽油',chip:'汽油',icon:'⛽',kind:'加油'},
+ {id:'eggs',name:'食材-鲜鸡蛋30枚',short:'盒马鲜鸡蛋 30枚',chip:'鸡蛋',icon:'🥚',kind:'鸡蛋'},
+ {id:'tissue',name:'纸巾-丝飘20包84抽',short:'丝飘纸巾 20包84抽',chip:'纸巾',icon:'🧻',kind:'纸巾'},
+ {id:'wipes',name:'湿巾-植护7包80抽',short:'植护湿巾 7包80抽',chip:'湿巾',icon:'💧',kind:'湿巾'}
 ];
+function priceMatch(r,p){
+ if(!p)return false;
+ const n=String(r&&r.name||'');
+ if(p.match){
+  if(n.indexOf(p.match)<0)return false;
+  if(p.exclude&&n.indexOf(p.exclude)>=0)return false;
+  return true;
+ }
+ return n===p.name;
+}
 function priceProduct(id){return PRICE_PRODUCTS.find(x=>x.id===id)||PRICE_PRODUCTS[0]}
 function priceRangeLabel(range){return ({'3':'近 3 个月','6':'近 6 个月','12':'近 12 个月','0':'全部记录'})[String(range)]||'近 6 个月'}
 function priceRangeStart(months){
@@ -1497,10 +1516,13 @@ function priceRestockAnalysis(records){
  return {...stats,status:'ready',windowStart,windowEnd,phase,days};
 }
 function priceAnalysis(){
- const product=priceProduct(state.priceProduct),start=priceRangeStart(state.priceRange),allRecords=priceRecordSort(activeRecords('').filter(r=>r.name===product.name)),records=allRecords.filter(r=>!start||r.purchase_date>=start);
+ const product=priceProduct(state.priceProduct),start=priceRangeStart(state.priceRange),allRecords=priceRecordSort(activeRecords('').filter(r=>priceMatch(r,product))),records=allRecords.filter(r=>!start||r.purchase_date>=start);
  const rows=records.map(r=>({r,value:actualOf(r),spec:priceSpec(r)})),latest=rows.at(-1)||null,last3=rows.slice(-3),avg=last3.length?round2(last3.reduce((s,x)=>s+x.value,0)/last3.length):null;
- const deviation=latest&&avg?round2((latest.value-avg)/avg*100):null,valid=rows.filter(x=>x.spec),latestUnit=valid.at(-1)||null;
- const unit=latestUnit?.spec.unit||'',unitRows=unit?valid.filter(x=>x.spec.unit===unit):[],unit3=unitRows.slice(-3),unitAvg=unit3.length?round2(unit3.reduce((s,x)=>s+x.spec.unitPrice,0)/unit3.length):null;
+ const deviation=latest&&avg?round2((latest.value-avg)/avg*100):null,valid=rows.filter(x=>x.spec);
+ const unitCount={};valid.forEach(x=>{const u=x.spec.unit;unitCount[u]=(unitCount[u]||0)+1});
+ const lastUnit=valid.length?valid.at(-1).spec.unit:'';
+ const unit=Object.keys(unitCount).sort((x,y)=>(unitCount[y]-unitCount[x])||(x===lastUnit?-1:y===lastUnit?1:0))[0]||'';
+ const unitRows=unit?valid.filter(x=>x.spec.unit===unit):[],unit3=unitRows.slice(-3),unitAvg=unit3.length?round2(unit3.reduce((s,x)=>s+x.spec.unitPrice,0)/unit3.length):null,latestUnit=unitRows.at(-1)||null;
  return {product,allRecords,records,rows,latest,avg,deviation,valid,latestUnit,unit,unitRows,unitAvg,restock:priceRestockAnalysis(allRecords)};
 }
 function priceMetric(label,value,note,cls=''){
@@ -1564,7 +1586,7 @@ function renderPrices(){
  const deviation=a.deviation==null?'—':`${a.deviation>0?'+':''}${a.deviation.toFixed(1)}%`,unitValue=a.latestUnit?`¥${a.latestUnit.spec.unitPrice.toFixed(2)}<em>/${esc(a.unit)}</em>`:'待补充';
  return `<div class="price-page">
   <header class="price-header"><div><span class="price-eyebrow">FREQUENT PURCHASE PRICE</span><h2>价格趋势分析</h2><p>同一商品按实际支出比较；补全净含量后，再判断单位价格是否真正划算，也会结合购买日期估算补货窗口。</p></div><label class="price-range"><span>时间范围</span><select id="price-range">${[['3','近 3 个月'],['6','近 6 个月'],['12','近 12 个月'],['0','全部记录']].map(([v,l])=>`<option value="${v}" ${range===v?'selected':''}>${l}</option>`).join('')}</select></label></header>
-  <section class="price-products" aria-label="选择常买商品">${PRICE_PRODUCTS.map(p=>{const count=activeRecords('').filter(r=>r.name===p.name).length,on=p.id===a.product.id;return `<button type="button" class="price-product ${on?'is-active':''}" data-price-product="${p.id}" aria-pressed="${on}"><span class="price-product-icon">${p.icon}</span><span><b>${esc(p.short)}</b><small>${count} 笔购买记录</small></span></button>`}).join('')}</section>
+  <section class="price-products" aria-label="选择常买商品">${PRICE_PRODUCTS.map(p=>{const count=activeRecords('').filter(r=>priceMatch(r,p)).length,on=p.id===a.product.id;return `<button type="button" class="price-product ${on?'is-active':''}" data-price-product="${p.id}" aria-pressed="${on}"><span class="price-product-icon">${p.icon}</span><span><b class="p-name">${esc(p.short)}</b><b class="p-chip">${esc(p.chip||p.short)}</b><small>${count} 笔购买记录</small></span></button>`}).join('')}</section>
   ${priceRestockCard(a)}
   <section class="price-metrics" aria-label="价格摘要">${priceMetric('最近一次实际支出',latest?money(latest.value):'—',latest?latest.r.purchase_date:'暂无记录')}${priceMetric('最近三次平均',a.avg!=null?money(a.avg):'—',`当前范围 ${a.rows.length} 笔`)}${priceMetric('当前偏离幅度',deviation,a.deviation==null?'暂无可比数据':'相对最近三次平均',a.deviation!=null&&a.deviation<=-5?'good':a.deviation!=null&&a.deviation>=5?'watch':'')}${priceMetric('最近可用单位价格',unitValue,a.latestUnit?`${a.latestUnit.spec.label} · 按实际支出计算`:'现有记录缺少规格','unit')}</section>
   <section class="price-analysis-grid"><article class="price-card price-trend-card"><div class="price-card-head"><div><h3>价格变化趋势</h3><p>${esc(priceRangeLabel(range))} · ${a.rows.length} 次购买</p></div><div class="price-legend"><span class="total"><i></i>实际支出</span>${a.unitRows.length?'<span class="unit"><i></i>单位价格</span>':''}</div></div>${priceTrendChart(a)}</article><aside class="price-side"><article class="price-card price-advice"><div class="price-card-head"><div><h3>智能诊断与建议</h3><p>基于当前账本记录</p></div><span class="price-spark">✦</span></div><div class="price-advice-box ${advice.tone}"><b>${esc(advice.title)}</b><p>${esc(advice.text)}</p></div></article><details class="price-card price-method" open><summary><span><b>计算说明</b><small>为什么要补充规格</small></span><i>⌄</i></summary><div class="price-method-body"><p>总价高不一定更贵，净含量也可能更多。最关键的是统一规格后比较：</p><strong>单位价格 = 实际支出 ÷ 净含量</strong><p>补货窗口只根据真实购买日期估算，不会把预计退款、备注或未记录库存假装算成剩余用量。</p></div></details></aside></section>
