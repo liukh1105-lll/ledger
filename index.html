@@ -114,6 +114,12 @@ body.device-phone .price-product.is-active .price-product-icon{background:#ece4f
 body.device-phone .price-product .p-name{display:none}
 body.device-phone .price-product .p-chip{display:block;font-size:13px;font-weight:650;white-space:nowrap;overflow:visible}
 body.device-phone .price-product small{display:none}
+/* AI 类目：明细里不显示规格净含量与单位价格 */
+.price-no-spec .price-history-note{display:none}
+.price-no-spec .price-table th:nth-child(3),.price-no-spec .price-table td:nth-child(3),
+.price-no-spec .price-table th:nth-child(6),.price-no-spec .price-table td:nth-child(6){display:none}
+.price-no-spec .price-history-card dl>div:nth-child(1),
+.price-no-spec .price-history-card dl>div:nth-child(2){display:none}
 </style>
 </head>
 <body class="device-pc">
@@ -1584,8 +1590,8 @@ function priceRestockCard(a){
 function priceHistory(a){
  if(!a.rows.length)return `<div class="price-history-empty">暂无购买记录</div>`;
  const rows=[...a.rows].reverse();
- const body=rows.map(x=>`<tr><td>${esc(x.r.purchase_date)}</td><td><b>${esc(a.product.short)}</b></td><td>${x.spec?esc(x.spec.label):'<span class="price-missing">待补充</span>'}</td><td>${money(x.r.price)}</td><td><b>${money(x.value)}</b></td><td>${x.spec?`¥${x.spec.unitPrice.toFixed(2)}/${esc(x.spec.unit)}`:'<span class="price-missing">—</span>'}</td><td>${esc([x.r.platform,x.r.shop].filter(Boolean).join(' · ')||'未填写')}</td><td><button type="button" class="price-edit" data-edit="${esc(x.r.id)}">${x.spec?'查看记录':'补充规格'}</button></td></tr>`).join('');
- const cards=rows.map(x=>`<article class="price-history-card"><div class="price-history-card-head"><div><time>${esc(x.r.purchase_date)}</time><b>${esc(a.product.short)}</b></div><strong>${money(x.value)}</strong></div><dl><div><dt>规格净含量</dt><dd>${x.spec?esc(x.spec.label):'<span class="price-missing">待补充</span>'}</dd></div><div><dt>单位价格</dt><dd>${x.spec?`¥${x.spec.unitPrice.toFixed(2)}/${esc(x.spec.unit)}`:'—'}</dd></div><div><dt>平台 / 商家</dt><dd>${esc([x.r.platform,x.r.shop].filter(Boolean).join(' · ')||'未填写')}</dd></div></dl><button type="button" class="price-edit" data-edit="${esc(x.r.id)}">${x.spec?'查看这笔记录':'补充规格后计算单位价格'}</button></article>`).join('');
+ const body=rows.map(x=>`<tr><td>${esc(x.r.purchase_date)}</td><td><b>${esc(a.product.short)}</b></td><td>${x.spec?esc(x.spec.label):'<span class="price-missing">待补充</span>'}</td><td>${money(x.r.price)}</td><td><b>${money(x.value)}</b></td><td>${x.spec?`¥${x.spec.unitPrice.toFixed(2)}/${esc(x.spec.unit)}`:'<span class="price-missing">—</span>'}</td><td>${esc([x.r.platform,x.r.shop].filter(Boolean).join(' · ')||'未填写')}</td><td><button type="button" class="price-edit" data-edit="${esc(x.r.id)}">${(a.product&&a.product.kind==='AI')||x.spec?'查看记录':'补充规格'}</button></td></tr>`).join('');
+ const cards=rows.map(x=>`<article class="price-history-card"><div class="price-history-card-head"><div><time>${esc(x.r.purchase_date)}</time><b>${esc(a.product.short)}</b></div><strong>${money(x.value)}</strong></div><dl><div><dt>规格净含量</dt><dd>${x.spec?esc(x.spec.label):'<span class="price-missing">待补充</span>'}</dd></div><div><dt>单位价格</dt><dd>${x.spec?`¥${x.spec.unitPrice.toFixed(2)}/${esc(x.spec.unit)}`:'—'}</dd></div><div><dt>平台 / 商家</dt><dd>${esc([x.r.platform,x.r.shop].filter(Boolean).join(' · ')||'未填写')}</dd></div></dl><button type="button" class="price-edit" data-edit="${esc(x.r.id)}">${(a.product&&a.product.kind==='AI')||x.spec?'查看这笔记录':'补充规格后计算单位价格'}</button></article>`).join('');
  return `<div class="price-table-wrap"><table class="price-table"><thead><tr><th>购买日期</th><th>商品</th><th>规格净含量</th><th>单次价格</th><th>实际支出</th><th>单位价格</th><th>平台 / 商家</th><th></th></tr></thead><tbody>${body}</tbody></table></div><div class="price-history-cards">${cards}</div>`;
 }
 function renderPrices(){
@@ -1597,7 +1603,7 @@ function renderPrices(){
   ${priceRestockCard(a)}
   <section class="price-metrics" aria-label="价格摘要">${priceMetric('最近一次实际支出',latest?money(latest.value):'—',latest?latest.r.purchase_date:'暂无记录')}${priceMetric('最近三次平均',a.avg!=null?money(a.avg):'—',`当前范围 ${a.rows.length} 笔`)}${priceMetric('当前偏离幅度',deviation,a.deviation==null?'暂无可比数据':'相对最近三次平均',a.deviation!=null&&a.deviation<=-5?'good':a.deviation!=null&&a.deviation>=5?'watch':'')}${(a.product&&a.product.kind==='AI')?'':priceMetric('最近可用单位价格',unitValue,a.latestUnit?`${a.latestUnit.spec.label} · 按实际支出计算`:'现有记录缺少规格','unit')}</section>
   <section class="price-analysis-grid"><article class="price-card price-trend-card"><div class="price-card-head"><div><h3>价格变化趋势</h3><p>${esc(priceRangeLabel(range))} · ${a.rows.length} 次购买</p></div><div class="price-legend"><span class="total"><i></i>实际支出</span>${a.unitRows.length?'<span class="unit"><i></i>单位价格</span>':''}</div></div>${priceTrendChart(a)}</article><aside class="price-side"><article class="price-card price-advice"><div class="price-card-head"><div><h3>智能诊断与建议</h3><p>基于当前账本记录</p></div><span class="price-spark">✦</span></div><div class="price-advice-box ${advice.tone}"><b>${esc(advice.title)}</b><p>${esc(advice.text)}</p></div></article><details class="price-card price-method" open><summary><span><b>计算说明</b><small>为什么要补充规格</small></span><i>⌄</i></summary><div class="price-method-body"><p>总价高不一定更贵，净含量也可能更多。最关键的是统一规格后比较：</p><strong>单位价格 = 实际支出 ÷ 净含量</strong><p>补货窗口只根据真实购买日期估算，不会把预计退款、备注或未记录库存假装算成剩余用量。</p></div></details></aside></section>
-  <section class="price-card price-history"><div class="price-card-head"><div><h3>购买记录明细</h3><p>${esc(a.product.name)} · ${a.rows.length} 笔</p></div><span class="price-history-note">点击记录可补充规格</span></div>${priceHistory(a)}</section>
+  <section class="price-card price-history${(a.product&&a.product.kind==='AI')?' price-no-spec':''}"><div class="price-card-head"><div><h3>购买记录明细</h3><p>${esc(a.product.name)} · ${a.rows.length} 笔</p></div><span class="price-history-note">点击记录可补充规格</span></div>${priceHistory(a)}</section>
  </div>`;
 }
     function pendingTasks(list){
