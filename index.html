@@ -96,6 +96,14 @@ dialog.cost-detail-modal{max-height:calc(100dvh - 96px);margin:48px auto}.device
 @media(max-width:380px){.refund-center-metrics{grid-template-columns:1fr}.refund-home .btn{margin-left:0}}
 @media(min-width:700px){.device-phone .refund-center-grid{grid-template-columns:minmax(0,1.7fr) minmax(250px,.8fr)}.device-phone .refund-center-metrics{grid-template-columns:1.35fr 1fr 1fr}.device-phone .refund-money-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.device-phone .refund-order-foot{flex-direction:row;align-items:center}.device-phone .refund-order-foot .btn{width:auto}.device-phone .refund-home .btn{width:auto;margin-left:0}}
 
+
+/* 首页大卡片：支付宝对账分项 */
+.hero-alipay{display:flex;flex-wrap:wrap;align-items:baseline;gap:7px 18px;margin:13px 0 0;padding-top:11px;border-top:1px solid #ffffff2e;color:#e4e6ff}
+.hero-alipay>span{font-size:11px;letter-spacing:.06em;opacity:.7}
+.hero-alipay em{font-style:normal;display:inline-flex;align-items:baseline;gap:5px;font-size:12px;opacity:.94}
+.hero-alipay b{font-size:14.5px;font-weight:600;letter-spacing:-.2px;font-variant-numeric:tabular-nums}
+body.device-phone .hero-alipay{gap:6px 14px;margin-top:11px;padding-top:10px}
+body.device-phone .hero-alipay b{font-size:13.5px}
 </style>
 </head>
 <body class="device-pc">
@@ -1289,7 +1297,7 @@ function necessityHTML(list){
 function homeHero(list){
  const todayList=activeRecords('').filter(r=>r.purchase_date===today()),saved=round2(list.reduce((s,r)=>s+discountTotal(r),0));
  const dateText=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'}),amount=money(actualTotal(list)),fees=feeAdjustmentTotal(list);
- return `<section class="hero" aria-label="本月实际支出总览"><div class="hero-topline"><span>本月实际支出</span><time datetime="${today()}">${dateText}</time></div><div class="hero-main"><strong class="hero-amount${amount.length>12?' amount-long':''}">${amount}</strong><div class="hero-stats"><div><small>今日实际</small><b>${money(actualTotal(todayList))}</b></div><div><small>本月消费</small><b>${money(spentTotal(list))}</b></div><div><small>已到账退款</small><b>${money(refundedTotal(list))}</b></div></div></div><p class="hero-extra">本月 ${list.length} 笔 · 优惠 ${money(saved)}${fees!==0?` · 附加费用净额 ${money(fees)}`:''}</p></section><p class="backup-note">只扣已到账商品退款，另计运费与保费、扣除运费报销；${REFUND_DATE_NOTE}</p>`;
+ return `<section class="hero" aria-label="本月实际支出总览"><div class="hero-topline"><span>本月实际支出</span><time datetime="${today()}">${dateText}</time></div><div class="hero-main"><strong class="hero-amount${amount.length>12?' amount-long':''}">${amount}</strong><div class="hero-stats"><div><small>今日实际</small><b>${money(actualTotal(todayList))}</b></div><div><small>本月消费</small><b>${money(spentTotal(list))}</b></div><div><small>已到账退款</small><b>${money(refundedTotal(list))}</b></div></div></div><p class="hero-extra">本月 ${list.length} 笔 · 优惠 ${money(saved)}${fees!==0?` · 附加费用净额 ${money(fees)}`:''}</p><p class="hero-alipay"><span>支付宝对账</span><em>支付支出<b>${money(round2(list.filter(r=>r.alipay_bill_category!=='提现流水').reduce((s,r)=>s+actualOf(r),0)))}</b></em><em>提现流水<b>${money(round2(list.filter(r=>r.alipay_bill_category==='提现流水').reduce((s,r)=>s+actualOf(r),0)))}</b></em></p></section><p class="backup-note">只扣已到账商品退款，另计运费与保费、扣除运费报销；${REFUND_DATE_NOTE}</p>`;
 }
 function mixPanel(list){
  const total=actualTotal(list),rows=NECESSITIES.map(n=>({...n,value:actualTotal(list.filter(r=>r.necessity===n.id))})),negative=rows.some(n=>n.value<0),canRatio=total>0&&!negative;
@@ -1727,13 +1735,13 @@ function openEditor(record=null,onReturn=null,saveDirect=false){
  <div id="previous-purchase" class="prev-box field full" role="status"></div>
  ${f('price','实付金额',r.price,'number','min="0" step="0.01" inputmode="decimal" placeholder="0.00" required')}
  ${sel('payment_method','支付方式',[["","未注明"],...PAYMENTS],r.payment_method)}
- ${sel('alipay_bill_category','支付宝账单归类',ALIPAY_BILL_CATEGORIES.map(x=>[x,x]),r.alipay_bill_category||'支付支出')}
+ 
  <div class="field full"><label class="checkbox-row"><input type="checkbox" id="has-discount" ${hasDiscount?'checked':''}>有优惠 <span class="muted">碰一下 / 红包 / 满减等</span></label><div id="discount-section" ${hasDiscount?'':'hidden'} style="margin-top:12px">${f('original_price','优惠前金额',r.original_price,'number','min="0" step="0.01" inputmode="decimal"')}<div id="discount-rows"></div><button type="button" class="btn small soft" id="discount-add" style="margin-top:8px">＋ 一项优惠</button><p id="discount-result" class="hint"></p></div></div>
- ${f('purchase_date','消费日期',r.purchase_date,'date',`max="${today()}" required`)}${f('purchase_time','购买时间（选填）',r.purchase_time||'','time','step="60"')}${sel('purchase_period','消费时段',PERIODS.map(p=>[p.v,p.l]),r.purchase_period)}
- ${sel('scene','生活场景',SCENES.map(s=>[s.id,s.icon+' '+s.label]),r.scene)}${sel('necessity','必要性',NECESSITIES.map(n=>[n.id,n.label]),r.necessity)}${sel('purchase_frequency','购买频率',PURCHASE_FREQUENCIES.map(n=>[n.id,n.label]),r.purchase_frequency||'')}
+ ${f('purchase_date','消费日期',r.purchase_date,'date',`max="${today()}" required`)}${f('purchase_time','购买时间（选填）',r.purchase_time||'','time','step="60"')}
+ ${sel('scene','生活场景',SCENES.map(s=>[s.id,s.icon+' '+s.label]),r.scene)}${sel('necessity','必要性',NECESSITIES.map(n=>[n.id,n.label]),r.necessity)}
  <p class="hint field full" id="scene-hint" hidden aria-live="polite"></p>
  </div>
- <details class="more" id="more-info"><summary>更多信息 <span class="muted">选填，不影响保存</span></summary><div class="more-body">
+ <details class="more" id="more-info"><summary>更多信息 <span class="muted">选填，不影响保存</span></summary><div class="more-body"><div class="form-grid">${sel('alipay_bill_category','支付宝账单归类',ALIPAY_BILL_CATEGORIES.map(x=>[x,x]),r.alipay_bill_category||'支付支出')}${sel('purchase_period','消费时段',PERIODS.map(p=>[p.v,p.l]),r.purchase_period)}${sel('purchase_frequency','购买频率',PURCHASE_FREQUENCIES.map(n=>[n.id,n.label]),r.purchase_frequency||'')}</div><p class="hint field full">支付宝账单归类只用于和支付宝账单对账，不影响金额与实际支出。</p>
  <div class="form-grid">${sel('platform','购买平台',PLATFORMS.map(s=>[s,s||'未注明']),r.platform)}${f('shop','店铺',r.shop,'text','maxlength="200"')}${sel('subcategory','细分小类',[['','未选择'],...SUBCATEGORIES.map(s=>[s,s])],SUBCATEGORIES.includes(r.subcategory)?r.subcategory:'')}</div>
  ${specSectionHtml(r)}
  <details class="more inner-more"><summary>评分与回购</summary><div class="more-body"><div class="form-grid">${sel('repurchase','还会再买吗',[['','未评价'],['yes','会回购'],['maybe','再考虑'],['no','不再买']],r.repurchase||'')}${sel('value_score','性价比',[['','未评分'],...[1,2,3,4,5].map(n=>[String(n),'★'.repeat(n)])],r.value_score?String(r.value_score):'')}${sel('quality_score','质量',[['0','未评分'],...[1,2,3,4,5].map(n=>[String(n),n+' 星'])],String(r.quality_score||0))}${sel('experience_score','体验',[['0','未评分'],...[1,2,3,4,5].map(n=>[String(n),n+' 星'])],String(r.experience_score||0))}</div></div></details>
