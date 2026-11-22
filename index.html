@@ -232,6 +232,15 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
   Cloud.saveCfg = function (cfg) { localStorage.setItem(LS_CFG, JSON.stringify(cfg)); };
   Cloud.clearCfg = function () { localStorage.removeItem(LS_CFG); };
 
+  /* 记住上次登录的邮箱（只存邮箱，绝不存密码） */
+  var LS_EMAIL = 'ledger2.lastEmail';
+  Cloud.lastEmail = function () {
+    try { return localStorage.getItem(LS_EMAIL) || ''; } catch (e) { return ''; }
+  };
+  Cloud.saveLastEmail = function (email) {
+    try { if (email) localStorage.setItem(LS_EMAIL, email); } catch (e) {}
+  };
+
   /* ---------------- 客户端初始化 ---------------- */
 
   Cloud.init = async function () {
@@ -701,9 +710,12 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
   /* 第二步：登录 / 注册 */
   Cloud.promptLogin = function () {
     return new Promise(function (resolve) {
+      var remembered = Cloud.lastEmail();
       Cloud.overlay(
         '登录云端账号',
-        '数据只属于你。首次使用请先点「注册」，用邮箱创建账号。',
+        remembered
+          ? ('账号已记住：' + remembered + '。输入密码就能继续。')
+          : '数据只属于你。首次使用请先点「注册」，用邮箱创建账号。',
         '<label class="cloud-field"><span>邮箱</span>' +
         '<input id="cloud-email" type="email" placeholder="you@example.com" autocomplete="username"></label>' +
         '<label class="cloud-field"><span>密码</span>' +
@@ -717,6 +729,14 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
 
       var emailEl = document.getElementById('cloud-email');
       var passEl = document.getElementById('cloud-pass');
+
+      // 预填上次登录的邮箱，并直接把光标放到密码框
+      if (remembered) {
+        emailEl.value = remembered;
+        passEl.focus();
+      } else {
+        emailEl.focus();
+      }
 
       async function doAuth(kind) {
         var email = (emailEl.value || '').trim();
@@ -738,6 +758,7 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
             throw new Error('注册成功，但还需要邮箱验证。请到 Supabase 控制台 Authentication → Sign In / Providers → Email 关闭 “Confirm email”，然后重新登录。');
           }
           Cloud.setSession(session);
+          Cloud.saveLastEmail(email);
           Cloud.closeOverlay();
           resolve(true);
         } catch (e) {
