@@ -24,7 +24,7 @@
 .cost-month-field select{appearance:none;min-width:132px;border:0;border-radius:9px;background:#f6f1ff;color:#3e2c64;font:inherit;font-weight:650;padding:8px 32px 8px 12px;outline:none;background-image:linear-gradient(45deg,transparent 50%,#7c58d7 50%),linear-gradient(135deg,#7c58d7 50%,transparent 50%);background-position:calc(100% - 15px) 50%,calc(100% - 10px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
 .cost-month-field select:focus{box-shadow:0 0 0 3px rgba(124,58,237,.13)}
 .cost-shell{overflow:hidden;border:1px solid #ebe7f0;border-radius:22px;background:#faf9fc;box-shadow:0 12px 34px rgba(35,27,49,.045)}
-.cost-hero{display:grid;grid-template-columns:minmax(280px,1.35fr) repeat(2,minmax(180px,1fr));gap:14px;padding:18px;background:#faf9fc}
+.cost-hero{display:grid;grid-template-columns:minmax(250px,1.2fr) repeat(3,minmax(150px,1fr));gap:14px;padding:18px;background:#faf9fc}
 .cost-type-card{position:relative;overflow:hidden;appearance:none;width:100%;border:1px solid #e8e4ed;background:#fff;color:#30283a;text-align:left;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease,background .16s ease}
 .cost-type-card:before{content:"";position:absolute;top:0;left:18px;right:18px;height:3px;border-radius:0 0 999px 999px;background:#8561d6;opacity:0;transition:opacity .16s ease}
 .cost-type-card:hover{transform:translateY(-1px);border-color:#d7cee6;box-shadow:0 10px 24px rgba(35,27,49,.06)}
@@ -49,8 +49,8 @@ dialog.cost-detail-modal{max-height:calc(100dvh - 96px);margin:48px auto}.device
 .cost-bottom{margin-top:14px;padding-top:14px;border-top:1px solid #f0ebf6}
 .cost-detail-hint{display:flex;align-items:center;gap:8px;margin:0;color:#7f7786;font-size:13px;font-weight:400;line-height:1.6}.cost-detail-hint span{display:grid;place-items:center;width:21px;height:21px;flex:0 0 auto;border-radius:50%;background:#f1edf6;color:#7658bd;font-size:12px;font-weight:650}
 .cost-method-inline{position:relative;min-width:96px;text-align:right}.cost-method-inline summary{cursor:pointer;color:#684daf;font-size:13px;font-weight:540;list-style:none}.cost-method-inline summary::-webkit-details-marker{display:none}.cost-method-inline p{width:min(620px,calc(100vw - 96px));margin:10px 0 0 auto;color:#817986;font-size:13px;font-weight:400;line-height:1.65;text-align:left}
-.device-phone .cost-topbar{align-items:stretch;flex-direction:column;gap:14px;margin-top:0}.device-phone .cost-topbar h2{font-size:24px}.device-phone .cost-topbar p{font-size:13px;line-height:1.55}.device-phone .cost-month-field{justify-content:space-between;padding-left:12px}.device-phone .cost-month-field select{min-width:145px}.device-phone .cost-shell{border-radius:19px}.device-phone .cost-hero{grid-template-columns:1fr 1fr;gap:10px;padding:12px}.device-phone .cost-primary{grid-column:1/-1;min-height:144px;padding:18px}.device-phone .cost-primary strong{font-size:30px}.device-phone .cost-mini{min-width:0;min-height:118px;padding:14px}.device-phone .cost-mini-top{align-items:flex-start;flex-direction:column;gap:6px;margin-bottom:12px}.device-phone .cost-mini span{font-size:13px;line-height:18px}.device-phone .cost-mini b{font-size:21px}.device-phone .cost-mini small{font-size:12px;line-height:17px}.device-phone .cost-content{padding:0 12px 12px}.device-phone .cost-breakdown{min-width:0;padding:17px;border-radius:15px}.device-phone .cost-section-head{align-items:flex-start}.device-phone .cost-section-head h3{font-size:16px}.device-phone .cost-section-side{align-items:flex-end;flex-direction:column;gap:6px}.device-phone .cost-section-side>b{font-size:16px}.device-phone .cost-method-inline{min-width:auto}.device-phone .cost-method-inline p{width:calc(100vw - 72px);margin-left:0}
-@media(max-width:1020px){.cost-hero{grid-template-columns:1fr 1fr}.cost-primary{grid-column:1/-1}}
+.device-phone .cost-topbar{align-items:stretch;flex-direction:column;gap:14px;margin-top:0}.device-phone .cost-topbar h2{font-size:24px}.device-phone .cost-topbar p{font-size:13px;line-height:1.55}.device-phone .cost-month-field{justify-content:space-between;padding-left:12px}.device-phone .cost-month-field select{min-width:145px}.device-phone .cost-shell{border-radius:19px}.device-phone .cost-hero{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}.device-phone .cost-primary{grid-column:1/-1;min-height:144px;padding:18px}.device-phone .cost-primary strong{font-size:30px}.device-phone .cost-mini{min-width:0;min-height:118px;padding:14px}.device-phone .cost-mini-top{align-items:flex-start;flex-direction:column;gap:6px;margin-bottom:12px}.device-phone .cost-mini span{font-size:13px;line-height:18px}.device-phone .cost-mini b{font-size:21px}.device-phone .cost-mini small{font-size:12px;line-height:17px}.device-phone .cost-content{padding:0 12px 12px}.device-phone .cost-breakdown{min-width:0;padding:17px;border-radius:15px}.device-phone .cost-section-head{align-items:flex-start}.device-phone .cost-section-head h3{font-size:16px}.device-phone .cost-section-side{align-items:flex-end;flex-direction:column;gap:6px}.device-phone .cost-section-side>b{font-size:16px}.device-phone .cost-method-inline{min-width:auto}.device-phone .cost-method-inline p{width:calc(100vw - 72px);margin-left:0}
+@media(max-width:1020px){.cost-hero{grid-template-columns:repeat(3,minmax(0,1fr))}.cost-primary{grid-column:1/-1}}
 @media(max-width:820px){.cost-topbar{align-items:stretch;flex-direction:column;gap:14px}.cost-month-field{justify-content:space-between}.cost-month-field select{min-width:145px}}
 @media(max-width:560px){.cost-page{padding-bottom:calc(142px + env(safe-area-inset-bottom))}.cost-topbar{margin-top:0}.cost-topbar h2{font-size:24px}.cost-topbar p{font-size:13px;line-height:1.55}.cost-month-field{padding-left:12px}.cost-shell{border-radius:19px}.cost-hero,.device-phone .cost-hero{grid-template-columns:1fr;gap:10px;padding:12px}.cost-primary,.device-phone .cost-primary{grid-column:auto;min-height:144px;padding:18px}.cost-primary strong{font-size:30px}.cost-mini,.device-phone .cost-mini{min-height:auto;padding:15px}.cost-mini-top,.device-phone .cost-mini-top{align-items:center;flex-direction:row;gap:10px;margin-bottom:12px}.cost-mini-top em{font-size:11px;padding:3px 7px}.cost-mini span{font-size:13px;line-height:18px}.cost-mini b{font-size:22px}.cost-mini small{font-size:12px;line-height:17px}.cost-content{padding:0 12px 14px}.cost-breakdown{padding:17px;border-radius:15px}.cost-section-head{align-items:flex-start}.cost-section-head h3{font-size:16px}.cost-section-side{align-items:flex-end;flex-direction:column;gap:6px}.cost-section-side>b{font-size:16px}.cost-method-inline{min-width:auto}.cost-method-inline p{width:calc(100vw - 72px);margin-left:0}}
 
@@ -105,8 +105,7 @@ dialog.cost-detail-modal{max-height:calc(100dvh - 96px);margin:48px auto}.device
 body.device-phone .hero-alipay{gap:6px 14px;margin-top:11px;padding-top:10px}
 body.device-phone .hero-alipay b{font-size:13.5px}
 
-/* 常买商品：手机端改 3 列紧凑网格，不再横向滚动 */
-.p-chip{display:none}
+/* 常买商品：手机端改 3 列紧凑网格，不再横向滚动 */.p-chip{display:none}
 body.device-phone .price-products{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;overflow:visible;padding:0;margin:0 0 12px;scroll-snap-type:none}
 body.device-phone .price-product{min-width:0;padding:11px 6px;gap:0;flex-direction:column;align-items:center;text-align:center;border-radius:14px}
 body.device-phone .price-product-icon{width:28px;height:28px;font-size:16px;border-radius:9px;margin-bottom:6px;background:#f5f2f8}
@@ -145,6 +144,14 @@ body.device-phone .price-product small{display:none}
   body.device-phone .price-product-icon{width:25px;height:25px;font-size:14px;margin-bottom:5px}
   /* 退款中心：底部已有导航，去掉重复的返回按钮 */
   body.device-phone .refund-center-heading .btn[data-go="home"]{display:none}
+  /* 固定成本：三张小卡并排，文字缩小不换行挤压 */
+  body.device-phone .cost-hero{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}
+  body.device-phone .cost-primary{grid-column:1/-1}
+  body.device-phone .cost-mini{padding:10px 8px;min-height:0;gap:4px}
+  body.device-phone .cost-mini-top span{font-size:12px;line-height:1.3;font-weight:600}
+  body.device-phone .cost-mini-top em{display:none}
+  body.device-phone .cost-mini b{font-size:17px;line-height:1.2}
+  body.device-phone .cost-mini small{font-size:10.5px;line-height:1.35;opacity:.75}
 }
 </style>
 </head>
@@ -1454,9 +1461,10 @@ function showCostBucketDetail(bucketId){
 }
 function livingCostPanel(all,monthList,opts={}){
  const selectedMonth=opts.selectedMonth||monthOf(today()),s=livingCostStats(all,monthList,selectedMonth),standalone=!!opts.standalone;
- const selectedType=['basic','extra','one_time'].includes(state.costType)?state.costType:'basic',monthState=selectedMonth===monthOf(today())?'本月进行中':'整月记录';
+ const selectedType=['basic','extra','one_time','subscription'].includes(state.costType)?state.costType:'basic',monthState=selectedMonth===monthOf(today())?'本月进行中':'整月记录';
  const compare=s.baseline===null?'先继续积累月份，后面再做月度对比':`${s.currentBasic>=s.baseline?'高于':'低于'}参考 ${money(Math.abs(s.currentBasic-s.baseline))}`;
- const meta={basic:{title:'基础生活成本',total:s.currentBasic,count:s.currentBasicCount,description:compare,method:'基础成本包含居住、吃饭饮水、交通用车、猫粮猫砂、通讯话费和日用消耗。预计退款不提前扣；已到账退款及退货费用按原消费月份计入。'},extra:{title:'额外改善型消费',total:s.currentExtra,count:s.currentExtraCount,description:'衣服、娱乐等弹性支出',method:'额外改善型消费包含衣服、游戏及未归入基础生活成本或一次性支出的弹性消费；下方按账本原有生活场景分类展示。'},one_time:{title:'一次性支出',total:s.currentOneTime,count:s.currentOneTimeCount,description:'设备、车险等低频支出',method:'一次性支出依据“一次性买”标记，以及设备、车险、高速费等低频特征识别；下方按账本原有生活场景分类展示。'}}[selectedType];
+ const sub=subscriptionStats(selectedMonth);
+ const meta={basic:{title:'基础生活成本',total:s.currentBasic,count:s.currentBasicCount,description:compare,method:'基础成本包含居住、吃饭饮水、交通用车、猫粮猫砂、通讯话费和日用消耗。预计退款不提前扣；已到账退款及退货费用按原消费月份计入。'},extra:{title:'额外改善型消费',total:s.currentExtra,count:s.currentExtraCount,description:'衣服、娱乐等弹性支出',method:'额外改善型消费包含衣服、游戏及未归入基础生活成本或一次性支出的弹性消费；下方按账本原有生活场景分类展示。'},one_time:{title:'一次性支出',total:s.currentOneTime,count:s.currentOneTimeCount,description:'设备、车险等低频支出',method:'一次性支出依据“一次性买”标记，以及设备、车险、高速费等低频特征识别；下方按账本原有生活场景分类展示。'},subscription:{title:'订阅月费',total:sub.total,count:sub.count,description:'话费、会员、房租等按月固定支出',method:'订阅月费按名称含「月卡 / 会员 / 话费 / 房租 / 水电 / 订阅 / 包月 / 宽带 / 网费 / 物业费」等关键词识别；只统计当月实际支出，不预测未来扣款。'}}[selectedType];
  const selectedRows=s.rowsByType[selectedType]||[];
  return `<section class="living-cost-panel cost-shell" aria-label="每月成本构成" style="${standalone?'':'margin-top:18px'}">
   <div class="cost-hero" role="group" aria-label="切换成本类型">
@@ -1466,12 +1474,12 @@ function livingCostPanel(all,monthList,opts={}){
     <small>${s.currentBasicCount} 笔分类记录 · ${compare}</small>
    </button>
    <button type="button" class="cost-mini cost-type-card ${selectedType==='extra'?'is-active':''}" data-cost-type="extra" aria-pressed="${selectedType==='extra'}"><div class="cost-mini-top"><span>额外改善型消费</span><em>${selectedType==='extra'?'当前查看':'点击查看'}</em></div><b>${money(s.currentExtra)}</b><small>${s.currentExtraCount} 笔 · 衣服、娱乐等弹性支出</small></button>
-   <button type="button" class="cost-mini cost-type-card ${selectedType==='one_time'?'is-active':''}" data-cost-type="one_time" aria-pressed="${selectedType==='one_time'}"><div class="cost-mini-top"><span>一次性支出</span><em>${selectedType==='one_time'?'当前查看':'点击查看'}</em></div><b>${money(s.currentOneTime)}</b><small>${s.currentOneTimeCount} 笔 · 设备、车险等低频支出</small></button>
+   <button type="button" class="cost-mini cost-type-card ${selectedType==='one_time'?'is-active':''}" data-cost-type="one_time" aria-pressed="${selectedType==='one_time'}"><div class="cost-mini-top"><span>一次性支出</span><em>${selectedType==='one_time'?'当前查看':'点击查看'}</em></div><b>${money(s.currentOneTime)}</b><small>${s.currentOneTimeCount} 笔 · 设备、车险等低频支出</small></button><button type="button" class="cost-mini cost-type-card ${selectedType==='subscription'?'is-active':''}" data-cost-type="subscription" aria-pressed="${selectedType==='subscription'}"><div class="cost-mini-top"><span>订阅月费</span><em>${selectedType==='subscription'?'当前查看':'点击查看'}</em></div><b>${money(sub.total)}</b><small>${sub.count} 笔 · 话费、会员、房租等</small></button>
   </div>
   <div class="cost-content">
    <div class="cost-breakdown">
     <div class="cost-section-head"><div><span>当月构成</span><h3>${esc(livingMonthLabel(selectedMonth))}${esc(meta.title)}</h3></div><div class="cost-section-side"><b>${money(meta.total)}</b><details class="cost-method-inline"><summary>查看计算口径</summary><p>${esc(meta.method)}</p><p>购买频率目前 ${s.labeled}/${s.total} 笔已判断，只作为辅助，不自动给未判断记录打标签。</p></details></div></div>
-    <div class="cost-rows">${livingMonthRows(selectedRows,`这个月暂无${meta.title}记录`)}</div>
+    <div class="cost-rows">${selectedType==='subscription'?subscriptionRows(sub.items):livingMonthRows(selectedRows,`这个月暂无${meta.title}记录`)}</div>
     <div class="cost-bottom">
      <p class="cost-detail-hint"><span aria-hidden="true">↗</span> 点击上方任意分类，查看这个月的具体消费明细</p>
     </div>
@@ -1497,6 +1505,37 @@ const PRICE_PRODUCTS=[
  {id:'ai_api',name:'AI 服务',short:'大肥鱼的 API',chip:'API',icon:'🐟',kind:'AI',
   matches:['API','api','GPT','gpt','Claude','OpenAI','openai','DeepSeek','deepseek','ChatGPT','Token','token','大模型','大肥鱼']}
 ];
+const SUB_WORDS=['月卡','会员','话费','房租','水电','订阅','包月','年费','续费','宽带','网费','物业费','流量'];
+function isSubscriptionRecord(r){
+ if(!r)return false;
+ if(r.purchase_frequency==='one_time')return false;
+ const t=String(r.name||'')+' '+(r.subcategory||'')+' '+(r.category_label||'');
+ return SUB_WORDS.some(w=>t.indexOf(w)>=0);
+}
+function subscriptionStats(month){
+ const list=activeRecords(month).filter(isSubscriptionRecord),by=new Map();
+ list.forEach(r=>{const k=String(r.name||'未命名');if(!by.has(k))by.set(k,[]);by.get(k).push(r)});
+ const items=[...by.entries()].map(([name,rs])=>({name,value:round2(rs.reduce((s,r)=>s+actualOf(r),0)),count:rs.length,last:rs.slice().sort((a,b)=>String(b.purchase_date||'').localeCompare(String(a.purchase_date||'')))[0]})).sort((a,b)=>b.value-a.value);
+ return {items,total:round2(items.reduce((s,x)=>s+x.value,0)),count:list.length};
+}
+function subscriptionRows(items){
+ if(!items.length)return `<div class="cost-empty">这个月暂无订阅或月费记录</div>`;
+ const max=Math.max(1,...items.map(x=>Math.abs(x.value)));
+ return items.map(x=>`<button type="button" class="cost-row" data-sub-name="${esc(x.name)}" aria-label="查看${esc(x.name)}明细"><div class="cost-row-head"><span>${esc(x.name)}<em>${x.count} 笔 · 最近 ${esc((x.last&&x.last.purchase_date)||'—')}</em></span><b>${money(x.value)}</b></div><div class="cost-track"><i style="width:${Math.max(5,Math.min(100,Math.abs(x.value)/max*100))}%"></i></div></button>`).join('');
+}
+function showSubscriptionDetail(name){
+ const month=state.costMonth||monthOf(today());
+ const items=activeRecords(month).filter(isSubscriptionRecord).filter(r=>String(r.name||'未命名')===name).map(r=>({r,value:actualOf(r)}));
+ const total=round2(items.reduce((sum,x)=>sum+x.value,0));
+ const d=$('#editor-dialog');d.classList.add('cost-detail-modal');
+ const body=items.length?items.map(x=>`<article class="cost-detail-item"><div><b>${esc(x.r.name)}</b><p>${esc(purchaseDateTimeText(x.r))} · ${esc(x.r.payment_method||'未注明付款')}</p>${receivedRefundOf(x.r)>0?`<p class="cost-detail-note">已到账退款 ${money(receivedRefundOf(x.r))}</p>`:''}</div><strong>${money(x.value)}</strong></article>`).join(''):'<div class="cost-empty">这个月这条订阅暂无明细</div>';
+ d.innerHTML=`<div class="dialog-head"><div><h2>${esc(livingMonthLabel(month))} · ${esc(name)}</h2><p class="muted">${items.length} 笔 · 合计 ${money(total)}</p></div><button class="icon-btn" id="cost-detail-close" aria-label="关闭">×</button></div><div class="dialog-body cost-detail-dialog">${body}<div class="cost-detail-actions"><span class="muted">按当前账本口径展示实际支出</span><button class="btn primary" id="cost-detail-ok">知道了</button></div></div>`;
+ if(!d.open)d.showModal();
+ $('#cost-detail-close').onclick=()=>d.close();
+ $('#cost-detail-ok').onclick=()=>d.close();
+ d.oncancel=()=>{d.oncancel=null};
+ d.onclose=()=>{d.classList.remove('cost-detail-modal');d.onclose=null};
+}
 function priceMatch(r,p){
  if(!p)return false;
  const n=String(r&&r.name||'');
@@ -1730,7 +1769,7 @@ function alipaySplitHtml(list){const pay=list.filter(r=>r.alipay_bill_category!=
 function renderSettings(){return `<div class="settings-grid"><section class="card"><h2>云端连接</h2><p class="muted" id="cloud-info" style="margin-top:10px;line-height:1.9">正在读取…</p><div class="setting-actions"><button id="cloud-refresh" class="btn">立即重新同步</button><button id="cloud-reconfig" class="btn">重新配置连接</button><button id="cloud-logout" class="btn">退出登录</button></div></section><section class="card"><h2>数据在云端</h2><p class="muted" style="margin-top:10px;line-height:1.9">数据保存在你自己的 Supabase 云端，手机和电脑共用同一份账本，改动会实时同步。JSON 导出现在只是手动备份，不再是同步的必要步骤。</p><div class="setting-actions"><button id="export-json" class="btn primary">导出 JSON 备份</button><button id="import-json" class="btn">导入 JSON</button><button id="export-csv" class="btn">导出 CSV</button></div><p class="muted" style="margin-top:12px">支持旧版 V1/V2 与当前 V3 备份；导入前会预览，不直接覆盖。退款、购买频率与规格字段会随 JSON 一起备份，生活成本和常买商品价格会用导入后的记录重新计算；两端请使用同一新版。</p></section><section class="card"><h2>这本账的状态</h2><dl class="kv-list"><div class="kv"><dt>全部记录</dt><dd>${activeRecords('').length} 笔</dd></div><div class="kv"><dt>退款中</dt><dd>${activeRecords('').filter(r=>refundStatusOf(r)==='pending').length} 笔</dd></div><div class="kv"><dt>最近备份</dt><dd>${esc(fmtBackupTime(db.last_backup_at))}</dd></div><div class="kv"><dt>当前版本</dt><dd>V3 · 简化退款追踪 + 成本基线 + 常买价格 · ${window.DEVICE_MODE==='phone'?'iPhone':'PC'}</dd></div></dl><p class="muted">清理浏览器数据不会影响云端账本；仍建议定期导出一份 JSON 留底。</p></section></div>`}
 function openAllRecords(refund=''){Object.assign(state,{q:'',scene:'',necessity:'',month:'',refund,listLimit:200});nav('list')}
 function bindView(){
- $$('[data-new]').forEach(b=>b.onclick=()=>openEditor());$$('[data-edit]').forEach(b=>b.onclick=()=>openEditor(db.records.find(r=>r.id===b.dataset.edit)));$$('[data-go]').forEach(b=>b.onclick=()=>nav(b.dataset.go));if($('#cost-month'))$('#cost-month').onchange=e=>{state.costMonth=e.target.value;render()};$$('[data-cost-type]').forEach(b=>b.onclick=()=>{state.costType=b.dataset.costType;render()});$$('[data-cost-bucket]').forEach(b=>b.onclick=()=>showCostBucketDetail(b.dataset.costBucket));if($('#price-range'))$('#price-range').onchange=e=>{state.priceRange=e.target.value;render()};$$('[data-price-product]').forEach(b=>b.onclick=()=>{state.priceProduct=b.dataset.priceProduct;render()});
+ $$('[data-new]').forEach(b=>b.onclick=()=>openEditor());$$('[data-edit]').forEach(b=>b.onclick=()=>openEditor(db.records.find(r=>r.id===b.dataset.edit)));$$('[data-go]').forEach(b=>b.onclick=()=>nav(b.dataset.go));if($('#cost-month'))$('#cost-month').onchange=e=>{state.costMonth=e.target.value;render()};$$('[data-cost-type]').forEach(b=>b.onclick=()=>{state.costType=b.dataset.costType;render()});$$('[data-cost-bucket]').forEach(b=>b.onclick=()=>showCostBucketDetail(b.dataset.costBucket));$$('[data-sub-name]').forEach(b=>b.onclick=()=>showSubscriptionDetail(b.dataset.subName));if($('#price-range'))$('#price-range').onchange=e=>{state.priceRange=e.target.value;render()};$$('[data-price-product]').forEach(b=>b.onclick=()=>{state.priceProduct=b.dataset.priceProduct;render()});
  $$('[data-pending-refunds]').forEach(b=>b.onclick=()=>{state.refundCenterFilter='pending';nav('refunds')});$$('[data-refund-filter]').forEach(b=>b.onclick=()=>{state.refundCenterFilter=b.dataset.refundFilter;render()});$$('[data-refund-update]').forEach(b=>b.onclick=()=>showRefundUpdate(b.dataset.refundUpdate));$$('[data-all-records]').forEach(b=>b.onclick=()=>openAllRecords());
  if($('#sentence-form'))$('#sentence-form').onsubmit=e=>{e.preventDefault();startBatch($('#sentence').value)};
  if($('#filter-q'))$('#filter-q').oninput=e=>{state.q=e.target.value;state.listLimit=200;const pos=e.target.selectionStart;render();$('#filter-q').focus();$('#filter-q').setSelectionRange(pos,pos)};
