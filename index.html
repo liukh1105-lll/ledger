@@ -120,6 +120,32 @@ body.device-phone .price-product small{display:none}
 .price-no-spec .price-table th:nth-child(6),.price-no-spec .price-table td:nth-child(6){display:none}
 .price-no-spec .price-history-card dl>div:nth-child(1),
 .price-no-spec .price-history-card dl>div:nth-child(2){display:none}
+
+/* ===== 手机端排版优化：减轻拥挤感 ===== */
+@media(max-width:430px){
+  body.device-phone{
+    --view-pad:0 15px calc(100px + env(safe-area-inset-bottom));
+    --card-pad:16px;--home-gap:15px;--hero-pad:19px;--entry-font:15.5px;
+  }
+  body.device-phone .hero-stats{gap:9px;padding-top:13px}
+  body.device-phone .hero-extra{margin-top:13px;padding-top:10px}
+  /* 备份条收成一行，隐藏解释长句 */
+  body.device-phone .backup-note{display:none}
+  body.device-phone .backup-bar{padding:9px 12px;border-radius:12px;gap:8px}
+  body.device-phone .backup-text{font-size:12.5px}
+  /* 输入行：按钮更紧凑，给提示语留位置 */
+  body.device-phone .sentence-entry{padding:4px 4px 4px 13px;border-radius:13px}
+  body.device-phone .sentence-entry .btn{padding:0 13px;font-size:15px;min-height:42px;border-radius:10px}
+  /* 筛选区更透气 */
+  body.device-phone .filters{gap:8px;margin-bottom:12px}
+  /* 常买商品：4 列两行放下，不再占三行 */
+  body.device-phone .price-products{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+  body.device-phone .price-product{padding:9px 3px;border-radius:12px}
+  body.device-phone .price-product .p-chip{font-size:12px}
+  body.device-phone .price-product-icon{width:25px;height:25px;font-size:14px;margin-bottom:5px}
+  /* 退款中心：底部已有导航，去掉重复的返回按钮 */
+  body.device-phone .refund-center-heading .btn[data-go="home"]{display:none}
+}
 </style>
 </head>
 <body class="device-pc">
@@ -1668,7 +1694,7 @@ function pendingRefundBar(list){
 }
 function renderHome(){
  const all=activeRecords(''),month=activeRecords(monthOf(today())),recent=all.slice(0,6);
- return `<form class="sentence-entry" id="sentence-form"><svg class="entry-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 5 5M4 20l5-1L21 7a2 2 0 0 0-5-5L4 14Z"/></svg><input id="sentence" type="text" maxlength="5000" placeholder="记一笔，比如：午饭｜18｜支付宝" aria-label="一句话记账" autocomplete="off" enterkeyhint="go"><button class="btn primary" id="parse" type="submit">识别核对</button></form>${backupBar()}${homeHero(month)}${pendingTasksPanel(all)}<div class="home-panels"><section class="card recent-panel"><div class="panel-heading"><h2>最近记录</h2><button class="btn small text-btn" data-all-records>全部 <span aria-hidden="true">↗</span></button></div><div class="record-list">${recent.length?recent.map(recordHTML).join(''):'<div class="soft-empty recent-empty"><svg class="empty-line-icon" viewBox="0 0 40 40" aria-hidden="true"><path d="M10 5h20v31l-5-3-5 3-5-3-5 3Z M15 13h10M15 19h10M15 25h6"/></svg><p>从第一笔开始</p><small>吃饭、买猫砂，都值得记一下。</small></div>'}</div></section>${mixPanel(month)}</div>`;
+ return `<form class="sentence-entry" id="sentence-form"><svg class="entry-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 5 5M4 20l5-1L21 7a2 2 0 0 0-5-5L4 14Z"/></svg><input id="sentence" type="text" maxlength="5000" placeholder="${document.body.classList.contains('device-phone')?'记一笔：午饭 18':'记一笔，比如：午饭｜18｜支付宝'}" aria-label="一句话记账" autocomplete="off" enterkeyhint="go"><button class="btn primary" id="parse" type="submit">识别核对</button></form>${backupBar()}${homeHero(month)}${pendingTasksPanel(all)}<div class="home-panels"><section class="card recent-panel"><div class="panel-heading"><h2>最近记录</h2><button class="btn small text-btn" data-all-records>全部 <span aria-hidden="true">↗</span></button></div><div class="record-list">${recent.length?recent.map(recordHTML).join(''):'<div class="soft-empty recent-empty"><svg class="empty-line-icon" viewBox="0 0 40 40" aria-hidden="true"><path d="M10 5h20v31l-5-3-5 3-5-3-5 3Z M15 13h10M15 19h10M15 25h6"/></svg><p>从第一笔开始</p><small>吃饭、买猫砂，都值得记一下。</small></div>'}</div></section>${mixPanel(month)}</div>`;
 }
 function filteredRecords(){return activeRecords(state.month).filter(r=>(!state.q||(r.name+' '+r.note+' '+r.platform).toLowerCase().includes(state.q.toLowerCase()))&&(!state.scene||r.scene===state.scene)&&(!state.necessity||r.necessity===state.necessity)&&(!state.refund||refundStatusOf(r)===state.refund))}
 function filterHTML(){return `<div class="toolbar"><input class="search" id="filter-q" aria-label="搜索记录" placeholder="搜索名称、平台或备注" value="${esc(state.q)}"><button class="btn" data-new>＋ 记一笔</button><button class="btn small" data-all-records>清除筛选</button></div><div class="filters"><label class="field">月份<input type="month" id="filter-month" value="${esc(state.month)}"></label><label class="field">场景<select id="filter-scene">${options([['','全部场景'],...SCENES.map(s=>[s.id,s.label])],state.scene)}</select></label><label class="field">必要性<select id="filter-necessity">${options([['','全部必要性'],...NECESSITIES.map(s=>[s.id,s.label])],state.necessity)}</select></label><label class="field">退款状态<select id="filter-refund">${options([['','全部状态'],...Object.entries(REFUND_STATUS_MAP)],state.refund||'')}</select></label></div><div class="toolbar"><button class="btn small" id="all-months">查看全部月份</button>${state.refund==='pending'?'<span class="tag return-pending">当前只看退款中</span>':''}</div>`}
