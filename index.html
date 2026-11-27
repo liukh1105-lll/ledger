@@ -1378,6 +1378,7 @@ function livingKeyword(text,words){return words.some(w=>text.includes(w))}
 const LIVING_BUCKETS={basic_rent:'居住固定',basic_food:'吃饭饮水',basic_transport:'交通用车',basic_pet:'猫粮猫砂',basic_comm:'通讯话费',basic_household:'日用消耗',extra:'额外改善',one_time:'一次性支出'};
 function livingBucket(r){
  const name=String(r.name||'').toLowerCase(),scene=r.scene||'',nec=r.necessity||'',freq=r.purchase_frequency||'';
+ if(isSubscriptionRecord(r))return {id:'subscription',label:'订阅月费'};
  if(freq==='one_time'||livingKeyword(name,['车险','保险','设备','鼠标','哑铃','电动牙刷','猫包','猫砂盆','年票','高速费','洗牙','阅读灯']))return {id:'one_time',label:LIVING_BUCKETS.one_time};
  if(scene==='clothing'||scene==='game')return {id:'extra',label:LIVING_BUCKETS.extra};
  if(livingKeyword(name,['房租','房租水电']))return {id:'basic_rent',label:LIVING_BUCKETS.basic_rent};
@@ -1464,7 +1465,7 @@ function livingCostPanel(all,monthList,opts={}){
  const selectedType=['basic','extra','one_time','subscription'].includes(state.costType)?state.costType:'basic',monthState=selectedMonth===monthOf(today())?'本月进行中':'整月记录';
  const compare=s.baseline===null?'先继续积累月份，后面再做月度对比':`${s.currentBasic>=s.baseline?'高于':'低于'}参考 ${money(Math.abs(s.currentBasic-s.baseline))}`;
  const sub=subscriptionStats(selectedMonth);
- const meta={basic:{title:'基础生活成本',total:s.currentBasic,count:s.currentBasicCount,description:compare,method:'基础成本包含居住、吃饭饮水、交通用车、猫粮猫砂、通讯话费和日用消耗。预计退款不提前扣；已到账退款及退货费用按原消费月份计入。'},extra:{title:'额外改善型消费',total:s.currentExtra,count:s.currentExtraCount,description:'衣服、娱乐等弹性支出',method:'额外改善型消费包含衣服、游戏及未归入基础生活成本或一次性支出的弹性消费；下方按账本原有生活场景分类展示。'},one_time:{title:'一次性支出',total:s.currentOneTime,count:s.currentOneTimeCount,description:'设备、车险等低频支出',method:'一次性支出依据“一次性买”标记，以及设备、车险、高速费等低频特征识别；下方按账本原有生活场景分类展示。'},subscription:{title:'订阅月费',total:sub.total,count:sub.count,description:'话费、会员、房租等按月固定支出',method:'订阅月费按名称含「月卡 / 会员 / 话费 / 房租 / 水电 / 订阅 / 包月 / 宽带 / 网费 / 物业费」等关键词识别；只统计当月实际支出，不预测未来扣款。'}}[selectedType];
+ const meta={basic:{title:'基础生活成本',total:s.currentBasic,count:s.currentBasicCount,description:compare,method:'基础成本包含居住、吃饭饮水、交通用车、猫粮猫砂、通讯话费和日用消耗。预计退款不提前扣；已到账退款及退货费用按原消费月份计入。'},extra:{title:'额外改善型消费',total:s.currentExtra,count:s.currentExtraCount,description:'衣服、娱乐等弹性支出',method:'额外改善型消费包含衣服、游戏及未归入基础生活成本或一次性支出的弹性消费；下方按账本原有生活场景分类展示。'},one_time:{title:'一次性支出',total:s.currentOneTime,count:s.currentOneTimeCount,description:'设备、车险等低频支出',method:'一次性支出依据“一次性买”标记，以及设备、车险、高速费等低频特征识别；下方按账本原有生活场景分类展示。'},subscription:{title:'订阅月费',total:sub.total,count:sub.count,description:'话费、会员、单车卡等按月服务费',method:'订阅月费按名称含「月卡 / 会员 / 话费 / 订阅 / 包月 / 宽带 / 网费 / 流量」等关键词识别；只统计当月实际支出，不预测未来扣款。房租水电仍计入基础生活成本。'}}[selectedType];
  const selectedRows=s.rowsByType[selectedType]||[];
  return `<section class="living-cost-panel cost-shell" aria-label="每月成本构成" style="${standalone?'':'margin-top:18px'}">
   <div class="cost-hero" role="group" aria-label="切换成本类型">
@@ -1474,7 +1475,7 @@ function livingCostPanel(all,monthList,opts={}){
     <small>${s.currentBasicCount} 笔分类记录 · ${compare}</small>
    </button>
    <button type="button" class="cost-mini cost-type-card ${selectedType==='extra'?'is-active':''}" data-cost-type="extra" aria-pressed="${selectedType==='extra'}"><div class="cost-mini-top"><span>额外改善型消费</span><em>${selectedType==='extra'?'当前查看':'点击查看'}</em></div><b>${money(s.currentExtra)}</b><small>${s.currentExtraCount} 笔 · 衣服、娱乐等弹性支出</small></button>
-   <button type="button" class="cost-mini cost-type-card ${selectedType==='one_time'?'is-active':''}" data-cost-type="one_time" aria-pressed="${selectedType==='one_time'}"><div class="cost-mini-top"><span>一次性支出</span><em>${selectedType==='one_time'?'当前查看':'点击查看'}</em></div><b>${money(s.currentOneTime)}</b><small>${s.currentOneTimeCount} 笔 · 设备、车险等低频支出</small></button><button type="button" class="cost-mini cost-type-card ${selectedType==='subscription'?'is-active':''}" data-cost-type="subscription" aria-pressed="${selectedType==='subscription'}"><div class="cost-mini-top"><span>订阅月费</span><em>${selectedType==='subscription'?'当前查看':'点击查看'}</em></div><b>${money(sub.total)}</b><small>${sub.count} 笔 · 话费、会员、房租等</small></button>
+   <button type="button" class="cost-mini cost-type-card ${selectedType==='one_time'?'is-active':''}" data-cost-type="one_time" aria-pressed="${selectedType==='one_time'}"><div class="cost-mini-top"><span>一次性支出</span><em>${selectedType==='one_time'?'当前查看':'点击查看'}</em></div><b>${money(s.currentOneTime)}</b><small>${s.currentOneTimeCount} 笔 · 设备、车险等低频支出</small></button><button type="button" class="cost-mini cost-type-card ${selectedType==='subscription'?'is-active':''}" data-cost-type="subscription" aria-pressed="${selectedType==='subscription'}"><div class="cost-mini-top"><span>订阅月费</span><em>${selectedType==='subscription'?'当前查看':'点击查看'}</em></div><b>${money(sub.total)}</b><small>${sub.count} 笔 · 话费、会员、单车卡等</small></button>
   </div>
   <div class="cost-content">
    <div class="cost-breakdown">
@@ -1505,7 +1506,7 @@ const PRICE_PRODUCTS=[
  {id:'ai_api',name:'AI 服务',short:'大肥鱼的 API',chip:'API',icon:'🐟',kind:'AI',
   matches:['API','api','GPT','gpt','Claude','OpenAI','openai','DeepSeek','deepseek','ChatGPT','Token','token','大模型','大肥鱼']}
 ];
-const SUB_WORDS=['月卡','会员','话费','房租','水电','订阅','包月','年费','续费','宽带','网费','物业费','流量'];
+const SUB_WORDS=['月卡','会员','话费','订阅','包月','年费','续费','宽带','网费','流量'];
 function isSubscriptionRecord(r){
  if(!r)return false;
  if(r.purchase_frequency==='one_time')return false;
